@@ -3,7 +3,7 @@ sudo: required
 
 go:
   - "1.12"
-  - master
+  - "master"
 
 script:
-  - make test
+  - env GO111MODULE=on make test
