@@ -5,7 +5,7 @@
 
 Router concurrent limiter for cod, it support custom max concurrency for each router.
 
-- `NewLimiter` create a limiter for router concurrent limit.
+- `NewLocalLimiter` create a limiter for router concurrent limit.
 
 ```go
 package main
@@ -23,7 +23,7 @@ func main() {
 	d := cod.New()
 
 	d.Use(routerLimiter.New(routerLimiter.Config{
-		Limiter: routerLimiter.NewLimiter(map[string]uint32{
+		Limiter: routerLimiter.NewLocalLimiter(map[string]uint32{
 			"/users/me": 2,
 		}),
 	}))

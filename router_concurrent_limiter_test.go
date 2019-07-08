@@ -27,8 +27,9 @@ import (
 )
 
 func TestLimiter(t *testing.T) {
+
 	assert := assert.New(t)
-	limiter := NewLimiter(map[string]uint32{
+	limiter := NewLocalLimiter(map[string]uint32{
 		"/users/login": 10,
 		"/books/:id":   100,
 	})
@@ -60,7 +61,7 @@ func TestNoLimiterPanic(t *testing.T) {
 }
 
 func TestRouterConcurrentLimiter(t *testing.T) {
-	limiter := NewLimiter(map[string]uint32{
+	limiter := NewLocalLimiter(map[string]uint32{
 		"/users/login": 1,
 		"/books/:id":   100,
 	})

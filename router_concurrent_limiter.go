@@ -38,20 +38,26 @@ type (
 	// Config router concurrent limiter config
 	Config struct {
 		Skipper cod.Skipper
-		Limiter *Limiter
+		Limiter Limiter
 	}
 	concurrency struct {
 		max     uint32
 		current uint32
 	}
-	// Limiter limiter
-	Limiter struct {
+	// Limiter limiter interface
+	Limiter interface {
+		IncConcurrency(route string) (current uint32, max uint32)
+		DecConcurrency(route string)
+		GetConcurrency(route string) (current uint32)
+	}
+	// LocalLimiter local limiter
+	LocalLimiter struct {
 		m map[string]*concurrency
 	}
 )
 
-// NewLimiter create a new limiter
-func NewLimiter(data map[string]uint32) *Limiter {
+// NewLocalLimiter create a new limiter
+func NewLocalLimiter(data map[string]uint32) *LocalLimiter {
 	m := make(map[string]*concurrency)
 	for route, max := range data {
 		m[route] = &concurrency{
@@ -59,13 +65,13 @@ func NewLimiter(data map[string]uint32) *Limiter {
 			current: 0,
 		}
 	}
-	return &Limiter{
+	return &LocalLimiter{
 		m: m,
 	}
 }
 
 // IncConcurrency concurrency inc
-func (l *Limiter) IncConcurrency(route string) (current, max uint32) {
+func (l *LocalLimiter) IncConcurrency(route string) (current, max uint32) {
 	concur, ok := l.m[route]
 	if !ok {
 		return 0, 0
@@ -75,7 +81,7 @@ func (l *Limiter) IncConcurrency(route string) (current, max uint32) {
 }
 
 // DecConcurrency concurrency dec
-func (l *Limiter) DecConcurrency(route string) {
+func (l *LocalLimiter) DecConcurrency(route string) {
 	concur, ok := l.m[route]
 	if !ok {
 		return
@@ -84,7 +90,7 @@ func (l *Limiter) DecConcurrency(route string) {
 }
 
 // GetConcurrency get concurrency
-func (l *Limiter) GetConcurrency(route string) uint32 {
+func (l *LocalLimiter) GetConcurrency(route string) uint32 {
 	concur, ok := l.m[route]
 	if !ok {
 		return 0
