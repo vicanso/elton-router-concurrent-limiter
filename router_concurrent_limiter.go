@@ -71,8 +71,8 @@ func NewLocalLimiter(data map[string]uint32) *LocalLimiter {
 }
 
 // IncConcurrency concurrency inc
-func (l *LocalLimiter) IncConcurrency(route string) (current, max uint32) {
-	concur, ok := l.m[route]
+func (l *LocalLimiter) IncConcurrency(key string) (current, max uint32) {
+	concur, ok := l.m[key]
 	if !ok {
 		return 0, 0
 	}
@@ -81,8 +81,8 @@ func (l *LocalLimiter) IncConcurrency(route string) (current, max uint32) {
 }
 
 // DecConcurrency concurrency dec
-func (l *LocalLimiter) DecConcurrency(route string) {
-	concur, ok := l.m[route]
+func (l *LocalLimiter) DecConcurrency(key string) {
+	concur, ok := l.m[key]
 	if !ok {
 		return
 	}
@@ -90,8 +90,8 @@ func (l *LocalLimiter) DecConcurrency(route string) {
 }
 
 // GetConcurrency get concurrency
-func (l *LocalLimiter) GetConcurrency(route string) uint32 {
-	concur, ok := l.m[route]
+func (l *LocalLimiter) GetConcurrency(key string) uint32 {
+	concur, ok := l.m[key]
 	if !ok {
 		return 0
 	}
@@ -119,9 +119,9 @@ func New(config Config) cod.Handler {
 		if skipper(c) {
 			return c.Next()
 		}
-		route := c.Route
-		current, max := limiter.IncConcurrency(route)
-		defer limiter.DecConcurrency(route)
+		key := c.Request.Method + " " + c.Route
+		current, max := limiter.IncConcurrency(key)
+		defer limiter.DecConcurrency(key)
 		if current > max {
 			err = createError(current, max)
 			return

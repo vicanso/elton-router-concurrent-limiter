@@ -24,7 +24,7 @@ func main() {
 
 	d.Use(routerLimiter.New(routerLimiter.Config{
 		Limiter: routerLimiter.NewLocalLimiter(map[string]uint32{
-			"/users/me": 2,
+			"GET /users/me": 2,
 		}),
 	}))
 	d.Use(responder.NewDefault())
