@@ -22,7 +22,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -72,7 +72,7 @@ func TestRouterConcurrentLimiter(t *testing.T) {
 	t.Run("skip", func(t *testing.T) {
 		assert := assert.New(t)
 		req := httptest.NewRequest("GET", "/", nil)
-		c := cod.NewContext(nil, req)
+		c := elton.NewContext(nil, req)
 		c.Committed = true
 		done := false
 		c.Next = func() error {
@@ -87,7 +87,7 @@ func TestRouterConcurrentLimiter(t *testing.T) {
 	t.Run("below limit", func(t *testing.T) {
 		assert := assert.New(t)
 		req := httptest.NewRequest("GET", "/books/1", nil)
-		c := cod.NewContext(nil, req)
+		c := elton.NewContext(nil, req)
 		c.Route = "/books/:id"
 		var count int32
 		max := 10
@@ -106,7 +106,7 @@ func TestRouterConcurrentLimiter(t *testing.T) {
 	t.Run("higher than limit", func(t *testing.T) {
 		assert := assert.New(t)
 		req := httptest.NewRequest("POST", "/users/login", nil)
-		c := cod.NewContext(nil, req)
+		c := elton.NewContext(nil, req)
 		c.Route = "/users/login"
 		c.Next = func() error {
 			time.Sleep(10 * time.Millisecond)
@@ -118,7 +118,7 @@ func TestRouterConcurrentLimiter(t *testing.T) {
 			time.Sleep(2 * time.Millisecond)
 			err := fn(c)
 			assert.NotNil(err)
-			assert.Equal("category=cod-router-concurrent-limiter, message=too many requset, current:2, max:1", err.Error())
+			assert.Equal("category=elton-router-concurrent-limiter, message=too many requset, current:2, max:1", err.Error())
 			done <- true
 		}()
 		err := fn(c)

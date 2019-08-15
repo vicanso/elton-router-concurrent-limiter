@@ -22,12 +22,12 @@ import (
 
 	"github.com/vicanso/hes"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 )
 
 const (
 	// ErrCategory router concurrent limiter error category
-	ErrCategory = "cod-router-concurrent-limiter"
+	ErrCategory = "elton-router-concurrent-limiter"
 )
 
 var (
@@ -37,7 +37,7 @@ var (
 type (
 	// Config router concurrent limiter config
 	Config struct {
-		Skipper cod.Skipper
+		Skipper elton.Skipper
 		Limiter Limiter
 	}
 	concurrency struct {
@@ -106,16 +106,16 @@ func createError(current, max uint32) error {
 }
 
 // New create a concurrent limiter middleware
-func New(config Config) cod.Handler {
+func New(config Config) elton.Handler {
 	skipper := config.Skipper
 	if skipper == nil {
-		skipper = cod.DefaultSkipper
+		skipper = elton.DefaultSkipper
 	}
 	if config.Limiter == nil {
 		panic(errRequireLimiter)
 	}
 	limiter := config.Limiter
-	return func(c *cod.Context) (err error) {
+	return func(c *elton.Context) (err error) {
 		if skipper(c) {
 			return c.Next()
 		}
