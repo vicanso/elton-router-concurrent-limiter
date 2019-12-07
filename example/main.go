@@ -1,13 +1,3 @@
-# elton-router-concurrent-limiter
-
-[![Build Status](https://img.shields.io/travis/vicanso/elton-router-concurrent-limiter.svg?label=linux+build)](https://travis-ci.org/vicanso/elton-router-concurrent-limiter)
-
-
-Router concurrent limiter for elton, it support custom max concurrency for each router.
-
-- `NewLocalLimiter` create a limiter for router concurrent limit.
-
-```go
 package main
 
 import (
@@ -41,4 +31,3 @@ func main() {
 		panic(err)
 	}
 }
-```
